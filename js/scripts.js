@@ -11,9 +11,9 @@ let pokemonRepository = (function () {
     //function to add a new pokemon to the pokemonList array
     if (
       typeof pokemon === "object" &&
-      "name" in pokemon && 
-      "height" in pokemon &&
-      "type" in pokemon
+      Object.keys(pokemon).includes("name") &&
+      Object.keys(pokemon).includes("height") &&
+      Object.keys(pokemon).includes("type")
     ) {
       //check if the object has the required keys
       pokemonList.push(pokemon); //add the pokemon to the pokemonList array
@@ -25,24 +25,34 @@ let pokemonRepository = (function () {
     //function to return the pokemonList array
     return pokemonList; //return the array
   }
+  function filterName(name) {
+    return pokemonList.filter(
+      (pokemon) => pokemon.name.toLowerCase() === name.toLowerCase()
+    );
+  }
+  function addListItem(pokemon) {
+    let pokemonDisplay = document.querySelector(".pokemon-list");
+    let listItem = document.createElement("li");
+    let button = document.createElement("button");
+    button.innerText = pokemon.name; //button text is the pokemon name
+    button.classList.add("button-class");
+    listItem.appendChild(button); //calling listItem to append button to listItem as its child
+    pokemonDisplay.appendChild(listItem); //append listItem to container
+    button.classList.add("button-class"); //add a class to the button element
+    button.addEventListener("click", () => showDetails(pokemon)); //when clicked, showDetails fn called w pokemon as obj.
+  }
+  function showDetails(pokemon) {
+    console.log(pokemon);
+  }
   return {
     //new object has getAll and add-return an object with two keys, add and getAll
     add: add, //add key has a value of the add function
     getAll: getAll, //getAll key has a value of the getAll function
+    filterName: filterName,
+    addListItem: addListItem,
   }; //end of return
 })(); //end of IIFE
 
 pokemonRepository.getAll().forEach(function (pokemon) {
-  // use getAll function to return the pokemonList array and use forEach method to iterate over the array
-  document.write("<p>" + pokemon.name + " (height: " + pokemon.height + ")");
-  if (pokemon.height > 1.0) {
-    document.write("  - Wow, that’s big!");
-  }
-  document.write("</p>"); // It's also good practice to close your paragraph tags.
+  pokemonRepository.addListItem(pokemon); //call the addListItem function to display the pokemon
 });
-
-function filterName(name) {
-  return pokemonRepository
-    .getAll()
-    .filter((pokemon) => pokemon.name.toLowerCase() === name.toLowerCase()); //filter the pokemonList array to return the pokemon with the name that matches the name argument, the comparison is case-insensitive
-}
