@@ -17,10 +17,21 @@
     <div>
         <input maxlength="20" class="search-bar" type="search" placeholder="Search for Pokemon">
     </div>
-    <ul class="pokemon-list"></ul>
-    <script src="js/promise-polyfill.js"></script>
-    <script src="js/fetch-polyfill.js"></script>
-    <script src="js/scripts.js"></script>
-</body>
+       
+        <div id="pokemonModal" class="modal">
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <h1 id="pokemonName"></h1>
+              <p id="pokemonTypes"></p>
+              <p id="pokemonHeight"></p>
+              <img id="pokemonImage" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Pokemon Image"> <!--this is a blank img, actual src from API -->
+            </div>
+          </div>
+        <ul class="pokemon-list"></ul>
+        <script src="js/promise-polyfill.js"></script>
+        <script src="js/fetch-polyfill.js"></script>
+        <script src="js/scripts.js"></script>
+    
+    </body>
 
 </html>
