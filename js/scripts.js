@@ -4,6 +4,8 @@ let pokemonRepository = (function () {
   //IIFE
   let pokemonList = []; // empty array of objects
   let apiUrl = "https://pokeapi.co/api/v2/pokemon/?limit=150"; //url to fetch the pokemon data
+  let modalContainer = document.querySelector("#modal-container");
+
   function add(pokemon) {
     //function to add a new pokemon to the pokemonList array
     if (
@@ -23,11 +25,11 @@ let pokemonRepository = (function () {
     return pokemonList; //return the array
   }
 
-  function filterName(name) {
-    return pokemonList.filter(
-      (pokemon) => pokemon.name.toLowerCase() === name.toLowerCase()
-    );
-  }
+  // function filterName(name) { 
+  //   return pokemonList.filter(
+  //     (pokemon) => pokemon.name.toLowerCase() === name.toLowerCase()
+  //   );
+  // }
 
   function addListItem(pokemon) {
     let pokemonDisplay = document.querySelector(".pokemon-list");
@@ -39,7 +41,6 @@ let pokemonRepository = (function () {
     pokemonDisplay.appendChild(listItem); //append listItem to container
     button.classList.add("button-class"); //add a class to the button element
     addListener(button, pokemon); //call the addListener function with the button and pokemon as arguments
-
   }
   function loadList() {
     //function to fetch the pokemon data
@@ -55,10 +56,11 @@ let pokemonRepository = (function () {
           let pokemon = {
             //create a pokemon object with the name and detailsUrl properties
             name: item.name,
+            type: item.types, 
             detailsUrl: item.url,
           };
           add(pokemon); //call the add function with the pokemon object as an argument
-          console.log(pokemon); //log all the pokemon objects to the console
+          
         });
       })
       .catch(function (e) {
@@ -77,37 +79,68 @@ let pokemonRepository = (function () {
         // Now we add the details to the item
         item.imageUrl = details.sprites.front_default;
         item.height = details.height;
-        item.types = details.types; // modify typoes w a for loop to iterate thru the object and push the type u want into an empty array of types to the userrs 
+        //item.type = details.types; // modify typoes w a for loop to iterate thru the object and push the type u want into an empty array of types to the userrs 
+        item.types = details.types.map((type) => type.type.name); //extract the type name from the type object in the details.types array, and store it in the item.types array. map() method creates a new array with thhe results of details.types array and the new array assigned to item.types????
       })
       .catch(function (e) {
         console.error(e);
       });
   }
 
-  // function showDetails(pokemon) { 
-  //   loadDetails(pokemon).then(function () {
-  //     console.log(pokemon);
-  //   });
-  // }
-  function showDetails(item) {  //uses the pokemon repo to log the details of the pokemon to the console 
-    pokemonRepository.loadDetails(item).then(function () {  //loadDetails fn called w item as an argument
-      console.log(item);
-    });
+
+  function showDetails(item) {
+    //uses the pokemon repo to log the details of the pokemon to the console
+    pokemonRepository.loadDetails(item).then(function () {
+      //loadDetails fn called w item as an argument
+      pokemonRepository.showModal(item.name, item.types, item.height, item.imageUrl); //showModal fn called w item.name and item.height as arguments to display the pokemon name and height
+    }); 
   }
+ 
 
   function addListener(button, pokemon) {
     //function to add an event listener to the button
     button.addEventListener("click", () => showDetails(pokemon)); //when clicked, showDetails fn called w pokemon as obj.
   }
+
+  
+
+  function showModal(name, type, height, imageUrl) {
+    let modal = document.getElementById('pokemonModal');
+    let nameElement = document.getElementById('pokemonName'); 
+    let typeElement = document.getElementById('pokemonTypes');
+    let heightElement = document.getElementById('pokemonHeight');
+    let imageElement = document.getElementById('pokemonImage');
+    let closeButton = document.querySelector('.close');
+  
+    nameElement.innerText = `Name: ${name}`;
+    typeElement.innerText = `Type: ${type}`;
+    heightElement.innerText = `Height: ${height}`;
+    imageElement.src = imageUrl; 
+  
+    modal.style.display = 'block';
+  
+    closeButton.onclick = function() {
+      modal.style.display = 'none';
+    };
+  
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    };
+  }
+  
+
   return {
     //new object has getAll and add-return an object with two keys, add and getAll
     add: add, //add key has a value of the add function
     getAll: getAll, //getAll key has a value of the getAll function
-    filterName: filterName,
+    // filterName: filterName, will use later for search bar functionality
     addListItem: addListItem,
     loadList: loadList,
-    loadDetails: loadDetails,
-    showDetails: showDetails,
+    loadDetails: loadDetails, 
+    showDetails: showDetails, 
+    showModal: showModal, 
   }; //end of return
 })(); //end of IIFE
 
