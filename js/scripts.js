@@ -32,6 +32,9 @@ let pokemonRepository = (function () {
       .text(pokemon.name)
       .addClass("btn btn-primary btn-block");
 
+    button.attr("data-toggle", "modal");
+    button.attr("data-target", "#pokemonModal");
+
     listItem.append(button);
     pokemonList.append(listItem);
     button.on("click", function () {
@@ -113,7 +116,7 @@ let pokemonRepository = (function () {
     modalBody.append(heightElement);
     modalBody.append(typesElement);
 
-    $("#pokemonModal").modal("show");
+    // $("#pokemonModal").modal("show");
   }
   // when user types in the search bar, pokemon list will filter based on the search query
   $(document).ready(function () { 
