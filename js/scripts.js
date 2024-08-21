@@ -10,9 +10,9 @@ let pokemonRepository = (function () {
     //function to add a new pokemon to the pokemonList array
     if (
       typeof pokemon === "object" &&
-      Object.keys(pokemon).includes("name") //&&
+      Object.keys(pokemon).includes("name") &&
       // Object.keys(pokemon).includes("height") &&
-      // Object.keys(pokemon).includes("type")
+      Object.keys(pokemon).includes("type") 
     ) {
       //check if the object has the required keys
       pokemonList.push(pokemon); //add the pokemon to the pokemonList array
@@ -22,26 +22,23 @@ let pokemonRepository = (function () {
   }
   function getAll() {
     //function to return the pokemonList array
-    return pokemonList; //return the array
+    return pokemonList;
   }
-
-  // function filterName(name) {
-  //   return pokemonList.filter(
-  //     (pokemon) => pokemon.name.toLowerCase() === name.toLowerCase()
-  //   );
-  // }
 
   function addListItem(pokemon) {
-    let pokemonDisplay = document.querySelector(".pokemon-list");
-    let listItem = document.createElement("li");
-    let button = document.createElement("button");
-    button.innerText = pokemon.name; //button text is the pokemon name
-    button.classList.add("button-class");
-    listItem.appendChild(button); //calling listItem to append button to listItem as its child
-    pokemonDisplay.appendChild(listItem); //append listItem to container
-    button.classList.add("button-class"); //add a class to the button element
-    addListener(button, pokemon); //call the addListener function with the button and pokemon as arguments
+    let pokemonList = $(".pokemon-list");
+    let listItem = $("<li></li>").addClass("list-group-item");
+    let button = $("<button></button>")
+      .text(pokemon.name)
+      .addClass("btn btn-primary btn-block");
+
+    listItem.append(button);
+    pokemonList.append(listItem);
+    button.on("click", function () {
+      showDetails(pokemon);
+    });
   }
+
   function loadList() {
     //function to fetch the pokemon data
     return fetch(apiUrl)
@@ -76,6 +73,7 @@ let pokemonRepository = (function () {
       })
       .then(function (details) {
         // Now we add the details to the item
+        item.name = details.name;
         item.imageUrl = details.sprites.front_default;
         item.height = details.height;
         //item.type = details.types; // modify typoes w a for loop to iterate thru the object and push the type u want into an empty array of types to the userrs
@@ -86,69 +84,56 @@ let pokemonRepository = (function () {
       });
   }
 
-  function showDetails(item) {
-    //uses the pokemon repo to log the details of the pokemon to the console
-    pokemonRepository.loadDetails(item).then(function () {
-      //loadDetails fn called w item as an argument
-      pokemonRepository.showModal(
-        item.name,
-        item.types,
-        item.height,
-        item.imageUrl
-      ); //showModal fn called w item.name and item.height as arguments to display the pokemon name and height
+  function showDetails(pokemon) {
+    loadDetails(pokemon).then(function () {
+      showModal(pokemon);
+      // $('#pokemonName').text(pokemon.name);
+      // $('#pokemonHeight').text('Height: ' + pokemon.height);
+      // $('#pokemonImage').attr('src', pokemon.imageUrl);
+      // $('#pokemonModal').modal('show');
     });
   }
 
-  function addListener(button, pokemon) {
-    //function to add an event listener to the button
-    button.addEventListener("click", () => showDetails(pokemon)); //when clicked, showDetails fn called w pokemon as obj.
+  function showModal(item) {
+    let modalBody = $(".modal-body");
+    let modalTitle = $(".modal-title");
+    // let modalHeader = $(".modal-header");
+
+    modalTitle.empty();
+    modalBody.empty();
+
+    let nameElement = $("<h1>" + item.name + "</h1>");
+    let imageElement = $('<img class="modal-img">');
+    imageElement.attr("src", item.imageUrl);
+    let heightElement = $("<p>" + "Height: " + item.height + "</p>");
+    let typesElement = $("<p>" + "Types: " + item.types + "</p>");
+
+    modalTitle.append(nameElement);
+    modalBody.append(imageElement);
+    modalBody.append(heightElement);
+    modalBody.append(typesElement);
+
+    $("#pokemonModal").modal("show");
   }
-
-  function showModal(name, type, height, imageUrl) {
-    let modal = document.getElementById("pokemonModal");
-    let nameElement = document.getElementById("pokemonName");
-    let typeElement = document.getElementById("pokemonTypes");
-    let heightElement = document.getElementById("pokemonHeight");
-    let imageElement = document.getElementById("pokemonImage");
-    let closeButton = document.querySelector(".close");
-
-    nameElement.innerText = `Name: ${name}`; //innerText property sets or returns the text content of the specified node, and all its descendants.
-    typeElement.innerText = `Type: ${type}`;
-    heightElement.innerText = `Height: ${height}`;
-    imageElement.src = imageUrl;
-
-    modal.style.display = "block";
-    modalContainer.classList.add("is-visible");
-
-    closeButton.onclick = function () {
-      hideModal();
-      // modal.style.display = 'none'; //when the user clicks on the close button, close the modal
-    };
-
-    window.onclick = function (event) {
-      //when the user clicks anywhere outside of the modal, close it
-      if (event.target == modal) {
-        hideModal();
-        // modal.style.display = 'none';
-      }
-    };
-    window.addEventListener("keydown", (e) => {
-      if (
-        e.key === "Escape" &&
-        modalContainer.classList.contains("is-visible")
-      ) {
-        hideModal();
-      }
+  // when user types in the search bar, pokemon list will filter based on the search query
+  $(document).ready(function () { 
+    $("#searchBar").on("input", function () {
+      let searchQuery = $(this).val().toLowerCase();
+      $(".pokemon-list li").each(function () {
+        let pokemonName = $(this).text().toLowerCase();
+        if (pokemonName.includes(searchQuery)) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        } 
+      });
     });
-  }
+  }); 
 
-  function hideModal() {
-    let modal = document.getElementById("pokemonModal");
-    if (modalContainer.classList.contains("is-visible")) {
-      modal.style.display = "none";
-      modalContainer.classList.remove("is-visible");
-    }
-  }
+  $("#pokemonList").on("click", "li", function () {
+    const pokemonId = $(this).attr("id");
+    window.location.hash = pokemonId;
+  });
 
   return {
     //new object has getAll and add-return an object with two keys, add and getAll
@@ -162,8 +147,6 @@ let pokemonRepository = (function () {
     showModal: showModal,
   }; //end of return
 })(); //end of IIFE
-
-// pokemonRepository.add({name: "Charmander", height: 0.6, type: ["fire"]}); //add a new pokemon to the pokemonList array
 
 pokemonRepository.loadList().then(function () {
   pokemonRepository.getAll().forEach(function (pokemon) {
