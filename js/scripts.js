@@ -11,7 +11,6 @@ let pokemonRepository = (function () {
     if (
       typeof pokemon === "object" &&
       Object.keys(pokemon).includes("name") &&
-      // Object.keys(pokemon).includes("height") &&
       Object.keys(pokemon).includes("type")
     ) {
       //check if the object has the required keys
@@ -79,7 +78,6 @@ let pokemonRepository = (function () {
         item.name = details.name;
         item.imageUrl = details.sprites.front_default;
         item.height = details.height;
-        //item.type = details.types; // modify typoes w a for loop to iterate thru the object and push the type u want into an empty array of types to the userrs
         item.types = details.types.map((type) => type.type.name); //extract the type name from the type object in the details.types array, and store it in the item.types array. map() method creates a new array with thhe results of details.types array and the new array assigned to item.types????
       })
       .catch(function (e) {
@@ -90,17 +88,12 @@ let pokemonRepository = (function () {
   function showDetails(pokemon) {
     loadDetails(pokemon).then(function () {
       showModal(pokemon);
-      // $('#pokemonName').text(pokemon.name);
-      // $('#pokemonHeight').text('Height: ' + pokemon.height);
-      // $('#pokemonImage').attr('src', pokemon.imageUrl);
-      // $('#pokemonModal').modal('show');
     });
   }
 
   function showModal(item) {
     let modalBody = $(".modal-body");
     let modalTitle = $(".modal-title");
-    // let modalHeader = $(".modal-header");
 
     modalTitle.empty();
     modalBody.empty();
@@ -116,7 +109,6 @@ let pokemonRepository = (function () {
     modalBody.append(heightElement);
     modalBody.append(typesElement);
 
-    // $("#pokemonModal").modal("show");
   }
   // when user types in the search bar, pokemon list will filter based on the search query
   $(document).ready(function () {
