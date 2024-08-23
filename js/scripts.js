@@ -12,7 +12,7 @@ let pokemonRepository = (function () {
       typeof pokemon === "object" &&
       Object.keys(pokemon).includes("name") &&
       // Object.keys(pokemon).includes("height") &&
-      Object.keys(pokemon).includes("type") 
+      Object.keys(pokemon).includes("type")
     ) {
       //check if the object has the required keys
       pokemonList.push(pokemon); //add the pokemon to the pokemonList array
@@ -109,7 +109,7 @@ let pokemonRepository = (function () {
     let imageElement = $('<img class="modal-img">');
     imageElement.attr("src", item.imageUrl);
     let heightElement = $("<p>" + "Height: " + item.height + "</p>");
-    let typesElement = $("<p>" + "Types: " + item.types + "</p>");
+    let typesElement = $("<p>" + "Type: " + item.types + "</p>");
 
     modalTitle.append(nameElement);
     modalBody.append(imageElement);
@@ -119,7 +119,7 @@ let pokemonRepository = (function () {
     // $("#pokemonModal").modal("show");
   }
   // when user types in the search bar, pokemon list will filter based on the search query
-  $(document).ready(function () { 
+  $(document).ready(function () {
     $("#searchBar").on("input", function () {
       let searchQuery = $(this).val().toLowerCase();
       $(".pokemon-list li").each(function () {
@@ -128,10 +128,10 @@ let pokemonRepository = (function () {
           $(this).show();
         } else {
           $(this).hide();
-        } 
+        }
       });
     });
-  }); 
+  });
 
   $("#pokemonList").on("click", "li", function () {
     const pokemonId = $(this).attr("id");
