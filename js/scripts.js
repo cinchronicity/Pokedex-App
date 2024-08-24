@@ -108,7 +108,6 @@ let pokemonRepository = (function () {
     modalBody.append(imageElement);
     modalBody.append(heightElement);
     modalBody.append(typesElement);
-
   }
   // when user types in the search bar, pokemon list will filter based on the search query
   $(document).ready(function () {
